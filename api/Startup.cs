@@ -1,18 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using api.Infra;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
+
+using FluentValidation.AspNetCore;
+
+using api.Infra;
+using api.Services;
+
 
 namespace api
 {
@@ -29,8 +27,14 @@ namespace api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<Context>(builder => builder.UseSqlServer(this.Configuration["ConnectionsString:App"]));
+            
+            services.AddTransient<ResponsavelService, ResponsavelService>();
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<Startup>());
+
+            services.AddAutoMapper(conf => conf.AddProfile<AutoMapperProfile>());
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "api", Version = "v1" });
