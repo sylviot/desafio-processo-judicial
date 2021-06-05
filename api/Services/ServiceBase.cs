@@ -21,8 +21,10 @@ namespace api.Services
             try
             {
                 this.context.BeginTransaction();
-                await this.context.AddAsync<T>(entity);
-                return await this.context.SaveChangesAsync() > 0;
+                var entry = await this.context.AddAsync<T>(entity);
+                this.context.SendChanges();
+
+                return true;
             }
             catch
             {
@@ -35,14 +37,15 @@ namespace api.Services
             return this.context.Set<T>().AsQueryable();
         }
 
-        public bool Update(T entity)
+        public async Task<bool> UpdateAsync(T entity)
         {
             try
             {
                 this.context.BeginTransaction();
                 var entry = this.context.Update<T>(entity);
+                await this.context.SendChanges();
 
-                return entry.State == Microsoft.EntityFrameworkCore.EntityState.Modified;
+                return true;
             }
             catch
             {
@@ -50,13 +53,14 @@ namespace api.Services
             }
         }
 
-        public bool Delete(T entity)
+        public async Task<bool> DeleteAsync(T entity)
         {
             try
             {
                 var entry = this.context.Remove(entity);
+                await this.context.SendChanges();
 
-                return entry.State == Microsoft.EntityFrameworkCore.EntityState.Deleted;
+                return true;
             }
             catch
             {

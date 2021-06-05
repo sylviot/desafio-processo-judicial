@@ -43,18 +43,18 @@ namespace api.Infra
             return this.Transaction;
         }
 
-        public void SendChanges()
+        public async Task SendChanges()
         {
-            this.Save();
-            this.Commit();
+            await this.Save();
+            await this.Commit();
         }
 
-        private void Commit()
+        private async Task Commit()
         {
             if(this.transaction != null)
             {
-                this.transaction.Commit();
-                this.transaction.Dispose();
+                await this.transaction.CommitAsync();
+                await this.transaction.DisposeAsync();
                 this.transaction = null;
             }
         }
@@ -67,12 +67,12 @@ namespace api.Infra
             }
         }
 
-        private void Save()
+        private async Task Save()
         {
             try
             {
                 this.ChangeTracker.DetectChanges();
-                this.SaveChanges();
+                await this.SaveChangesAsync();
             }
             catch
             {
