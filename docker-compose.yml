@@ -5,3 +5,11 @@ services:
     build: ./api
     ports:
       - "80:80"
+  database:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
+      - SA_PASSWORD=!@#Desafio#@!
+    ports:
+      - "1444:1433"
