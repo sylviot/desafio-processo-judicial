@@ -1,4 +1,5 @@
 ﻿using api.Infra;
+using api.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace api.Services
 {
-    public class ServiceBase<T> where T : class
+    public class ServiceBase<T> where T : ModelBase
     {
         protected readonly Context context;
 
@@ -29,6 +30,11 @@ namespace api.Services
             }
         }
 
+        public IQueryable<T> Read()
+        {
+            return this.context.Set<T>().AsQueryable();
+        }
+
         public bool Update(T entity)
         {
             try
@@ -37,6 +43,20 @@ namespace api.Services
                 var entry = this.context.Update<T>(entity);
 
                 return entry.State == Microsoft.EntityFrameworkCore.EntityState.Modified;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool Delete(T entity)
+        {
+            try
+            {
+                var entry = this.context.Remove(entity);
+
+                return entry.State == Microsoft.EntityFrameworkCore.EntityState.Deleted;
             }
             catch
             {
