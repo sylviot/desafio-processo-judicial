@@ -17,6 +17,33 @@ namespace api.Services
         {
         }
 
+        public int Deep(int? paiId, int deep = 0)
+        {
+            if(!paiId.HasValue || deep > 4)
+            {
+                return deep;
+            }
+
+            var pai = this.Read().SingleOrDefault(x => x.Id == paiId);
+            return Deep(pai?.ProcessoPai, deep + 1);
+        }
+
+        public bool Leef(int target, int id)
+        {
+            var filhos = this.Read().Where(x => x.ProcessoPai == id).Select(x => x.Id).ToList();
+            if (filhos.Any(x => x == target))
+            {
+                return false;
+            }
+
+            foreach (var item in filhos)
+            {
+                return Leef(target, item);
+            }
+
+            return false;
+        }
+
         public bool Unique(ProcessoDto processo)
         {
             return !this.Read().Any(x => x.NumeroUnificado == processo.NumeroUnificado && x.Id != processo.Id);

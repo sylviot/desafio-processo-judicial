@@ -9,6 +9,7 @@ namespace api.Models.Http
     public class ProcessoDto
     {
         public int Id { get; set; }
+        public int? ProcessoPai { get; set; }
         public string NumeroUnificado { get; set; }
         public DateTime DataDistribuicao { get; set; }
         public bool SegredoJustica { get; set; }

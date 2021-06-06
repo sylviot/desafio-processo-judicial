@@ -30,7 +30,11 @@ namespace api.Validations
         {
             this.service = _processoService;
             RuleFor(x => x)
-                .Must(this.service.Unique).WithMessage("Número unificado já cadastrado");
+                .Must(this.service.Unique).WithMessage("Número unificado já cadastrado")
+                .Must(this.ProcessoNaoCiclico).WithMessage("ProcessoPai está contido na árvore");
+
+            RuleFor(x => x.ProcessoPai)
+                .Must(x => this.service.Deep(x) < 4).WithMessage("ProcessoPai já está no 4º nível (Neto)");
 
             RuleFor(x => x.NumeroUnificado)
                 .NotEmpty().WithMessage("Campo obrigatório")
@@ -59,6 +63,16 @@ namespace api.Validations
         public bool NumeroUnificadoFormatValidation(string numeroUnificado)
         {
             return Regex.IsMatch(numeroUnificado, @"\d{7}\d{2}\d{4}\w{3}\d{4}");
+        }
+
+        public bool ProcessoNaoCiclico(ProcessoDto processo)
+        {
+            if (processo.ProcessoPai.HasValue)
+            {
+                return this.service.Leef(processo.ProcessoPai.Value, processo.Id);
+            }
+
+            return true;
         }
     }
 }
