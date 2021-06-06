@@ -1,12 +1,12 @@
 ﻿using api.Models.Http;
 using api.Services;
+using api.Services.Interfaces;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace api.Validations
 {
@@ -25,8 +25,8 @@ namespace api.Validations
 
     public class ProcessoValidator : AbstractValidator<ProcessoDto>
     {
-        protected readonly ProcessoService service;
-        public ProcessoValidator(ProcessoService _processoService)
+        protected readonly IProcessoService service;
+        public ProcessoValidator(IProcessoService _processoService)
         {
             this.service = _processoService;
             RuleFor(x => x)
@@ -56,12 +56,18 @@ namespace api.Validations
 
             RuleFor(x => x.Responsaveis)
                 .NotNull().WithMessage("Escolha algum responsável")
-                .Must(x => x.Count() <= 3).WithMessage("Limite de 3 responsáveis")
-                .Must((root, c) => c.Distinct(new ComparadorResponsavel()).Count() == root.Responsaveis.Count()).WithMessage("Escolha responsáveis distintos.");
+                .Must(x => x != null && x.Count() >= 1).WithMessage("Minímo de 1 responsável")
+                .Must(x => x != null && x.Count() <= 3).WithMessage("Limite de 3 responsáveis")
+                .Must((root, c) => c != null && c.Distinct(new ComparadorResponsavel()).Count() == root.Responsaveis.Count()).WithMessage("Escolha responsáveis distintos.");
         }
 
         public bool NumeroUnificadoFormatValidation(string numeroUnificado)
         {
+            if(string.IsNullOrEmpty(numeroUnificado))
+            {
+                return false;
+            }
+
             return Regex.IsMatch(numeroUnificado, @"\d{7}\d{2}\d{4}\w{3}\d{4}");
         }
 

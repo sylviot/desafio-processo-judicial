@@ -1,5 +1,6 @@
 ﻿using api.Models.Http;
 using api.Services;
+using api.Services.Interfaces;
 using FluentValidation;
 using System.Text.RegularExpressions;
 
@@ -7,8 +8,8 @@ namespace api.Validations
 {
     public class ResponsavelValidator : AbstractValidator<ResponsavelDto>
     {
-        protected readonly ResponsavelService service;
-        public ResponsavelValidator(ResponsavelService _responsavelService)
+        protected readonly IResponsavelService service;
+        public ResponsavelValidator(IResponsavelService _responsavelService)
         {
             this.service = _responsavelService;
 
@@ -33,6 +34,11 @@ namespace api.Validations
 
         public bool CpfFormatValidation(string cpf)
         {
+            if (string.IsNullOrEmpty(cpf))
+            {
+                return false;
+            }
+
             return Regex.IsMatch(cpf, @"\d{3}\.\d{3}\.\d{3}\-\d{2}");
         }
 

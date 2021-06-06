@@ -1,6 +1,7 @@
 ﻿using api.Infra;
 using api.Models;
 using api.Models.Http;
+using api.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace api.Services
 {
-    public class ResponsavelService : ServiceBase<Responsavel>
+    public class ResponsavelService : ServiceBase<Responsavel>, IResponsavelService
     {
         public ResponsavelService(Context _context)
             : base(_context)

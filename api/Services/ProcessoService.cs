@@ -1,6 +1,7 @@
 ﻿using api.Infra;
 using api.Models;
 using api.Models.Http;
+using api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace api.Services
 {
-    public class ProcessoService : ServiceBase<Processo>
+    public class ProcessoService : ServiceBase<Processo>, IProcessoService
     {
         public ProcessoService(Context _context)
             : base(_context)
