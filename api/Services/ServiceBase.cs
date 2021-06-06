@@ -1,5 +1,6 @@
 ﻿using api.Infra;
 using api.Models;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,13 +17,13 @@ namespace api.Services
             this.context = _context;
         }
 
-        public async Task<bool> CreateAsync(T entity)
+        public virtual async Task<bool> CreateAsync(T entity)
         {
             try
             {
                 this.context.BeginTransaction();
-                var entry = await this.context.AddAsync<T>(entity);
-                this.context.SendChanges();
+                await this.context.AddAsync<T>(entity);
+                await this.context.SendChanges();
 
                 return true;
             }
@@ -37,12 +38,12 @@ namespace api.Services
             return this.context.Set<T>().AsQueryable();
         }
 
-        public async Task<bool> UpdateAsync(T entity)
+        public virtual async Task<bool> UpdateAsync(T entity)
         {
             try
             {
                 this.context.BeginTransaction();
-                var entry = this.context.Update<T>(entity);
+                this.context.Update<T>(entity);
                 await this.context.SendChanges();
 
                 return true;
@@ -53,7 +54,7 @@ namespace api.Services
             }
         }
 
-        public async Task<bool> DeleteAsync(T entity)
+        public virtual async Task<bool> DeleteAsync(T entity)
         {
             try
             {
