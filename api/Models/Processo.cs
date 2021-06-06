@@ -12,7 +12,6 @@ namespace api.Models
         public string Descricao { get; set; }
         public int Situacao { get; set; }
 
-        //public ICollection<Responsavel> Responsaveis { get; set; }
-        public IList<ProcessoResponsavel> Responsaveis { get; set; }
+        public ICollection<ProcessoResponsavel> Responsaveis { get; set; }
     }
 }
