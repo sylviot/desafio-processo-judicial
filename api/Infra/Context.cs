@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace api.Infra
 {
-    public class Context : DbContext
+    public class Context : DbContext, IDisposable
     {
         private IDbContextTransaction transaction;
         public IDbContextTransaction Transaction
@@ -27,6 +27,7 @@ namespace api.Infra
 
         public DbSet<Processo> Processos { get; set; }
         public DbSet<Responsavel> Responsaveis { get; set; }
+        public DbSet<ProcessoResponsavel> ProcessoResponsavel { get; set; }
 
         public Context(DbContextOptions<Context> options) : base(options) { }
 
@@ -36,6 +37,17 @@ namespace api.Infra
 
             modelBuilder.ApplyConfiguration(new ProcessoMap());
             modelBuilder.ApplyConfiguration(new ResponsavelMap());
+
+            modelBuilder.Entity<ProcessoResponsavel>().HasKey(x => new { x.ProcessoId, x.ResponsavelId });
+            modelBuilder.Entity<ProcessoResponsavel>()
+                .HasOne(x => x.Responsavel)
+                .WithMany(x => x.Processos)
+                .HasForeignKey(x => x.ResponsavelId);
+
+            modelBuilder.Entity<ProcessoResponsavel>()
+                .HasOne(x => x.Processo)
+                .WithMany(x => x.Responsaveis)
+                .HasForeignKey(x => x.ProcessoId);
         }
 
         public IDbContextTransaction BeginTransaction()
@@ -46,12 +58,11 @@ namespace api.Infra
         public async Task SendChanges()
         {
             await this.Save();
-            await this.Commit();
         }
 
-        private async Task Commit()
+        private async Task CommitAsync()
         {
-            if(this.transaction != null)
+            if (this.transaction != null)
             {
                 await this.transaction.CommitAsync();
                 await this.transaction.DisposeAsync();
@@ -61,9 +72,11 @@ namespace api.Infra
 
         private void Rollback()
         {
-            if(this.transaction != null)
+            if (this.transaction != null)
             {
                 this.transaction.Rollback();
+                this.transaction.Dispose();
+                this.transaction = null;
             }
         }
 
@@ -73,10 +86,12 @@ namespace api.Infra
             {
                 this.ChangeTracker.DetectChanges();
                 await this.SaveChangesAsync();
+                await this.CommitAsync();
             }
             catch
             {
                 this.Rollback();
+                throw;
             }
         }
     }

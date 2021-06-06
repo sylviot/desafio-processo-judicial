@@ -14,6 +14,10 @@ namespace api
         {
             CreateMap<Responsavel, ResponsavelDto>();
             CreateMap<ResponsavelDto, Responsavel>();
+
+            CreateMap<Processo, ProcessoDto>();
+            CreateMap<ProcessoDto, Processo>()
+                .ForMember(x => x.Responsaveis, x => x.MapFrom((pdto, p) => pdto.Responsaveis.Select(s => new ProcessoResponsavel { ProcessoId = pdto.Id, ResponsavelId = s.Id })));
         }
     }
 }

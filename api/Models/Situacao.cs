@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace api.Models
 {
-    public class Situacao
+    public class Situacao : ModelBase
     {
         public string Nome { get; set; }
         public bool Finalizado { get; set; }

@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace api.Models
+namespace api.Models.Http
 {
-    public class Processo : ModelBase
+    public class ProcessoDto
     {
+        public int Id { get; set; }
         public string NumeroUnificado { get; set; }
         public DateTime DataDistribuicao { get; set; }
         public bool SegredoJustica { get; set; }
@@ -12,7 +16,6 @@ namespace api.Models
         public string Descricao { get; set; }
         public int Situacao { get; set; }
 
-        //public ICollection<Responsavel> Responsaveis { get; set; }
-        public IList<ProcessoResponsavel> Responsaveis { get; set; }
+        public ResponsavelDto[] Responsaveis { get; set; }
     }
 }

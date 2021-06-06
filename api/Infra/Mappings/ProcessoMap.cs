@@ -12,6 +12,8 @@ namespace api.Infra.Mappings
     {
         public virtual void Configure(EntityTypeBuilder<Processo> builder)
         {
+            builder.HasIndex(x => x.NumeroUnificado).IsUnique();
+
             builder.Property(x => x.DataDistribuicao).IsRequired();
             builder.Property(x => x.Descricao).IsRequired().HasMaxLength(1000);
             builder.Property(x => x.NumeroUnificado).IsRequired().HasMaxLength(20);

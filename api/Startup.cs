@@ -29,6 +29,7 @@ namespace api
             services.AddDbContext<Context>(builder => builder.UseSqlServer(this.Configuration["ConnectionsString:App"]));
             
             services.AddTransient<ResponsavelService, ResponsavelService>();
+            services.AddTransient<ProcessoService, ProcessoService>();
 
             services.AddControllers()
                 .AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<Startup>());
