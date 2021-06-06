@@ -19,7 +19,7 @@ namespace tests
     public class ApiTestFactory : WebApplicationFactory<api.Startup>
     {
         protected IConfiguration configuration;
-
+        public Context context;
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureAppConfiguration(config =>
@@ -37,7 +37,12 @@ namespace tests
                 services.Remove(serviceContext);
 
                 services.AddDbContext<Context>(builder => builder.UseSqlServer(this.configuration["ConnectionsString:AppTest"]));
+
+                this.context = services.BuildServiceProvider().GetRequiredService<Context>();
+                //db.Database.EnsureCreated();
             });
+
+            //base.ConfigureWebHost(builder);
         }
     }
 }

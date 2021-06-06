@@ -10,7 +10,7 @@ using FluentValidation.AspNetCore;
 
 using api.Infra;
 using api.Services;
-
+using api.Services.Interfaces;
 
 namespace api
 {
@@ -28,8 +28,8 @@ namespace api
         {
             services.AddDbContext<Context>(builder => builder.UseSqlServer(this.Configuration["ConnectionsString:App"]));
             
-            services.AddTransient<ResponsavelService, ResponsavelService>();
-            services.AddTransient<ProcessoService, ProcessoService>();
+            services.AddTransient<IResponsavelService, ResponsavelService>();
+            services.AddTransient<IProcessoService, ProcessoService>();
 
             services.AddControllers()
                 .AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<Startup>());
