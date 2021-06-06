@@ -1,5 +1,6 @@
 ﻿using api.Infra;
 using api.Models;
+using api.Models.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
@@ -14,6 +15,11 @@ namespace api.Services
         public ProcessoService(Context _context)
             : base(_context)
         {
+        }
+
+        public bool Unique(ProcessoDto processo)
+        {
+            return !this.Read().Any(x => x.NumeroUnificado == processo.NumeroUnificado && x.Id != processo.Id);
         }
 
         public override Task<bool> UpdateAsync(Processo entity)

@@ -1,9 +1,11 @@
 ﻿using api.Models.Http;
+using api.Services;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace api.Validations
@@ -20,13 +22,20 @@ namespace api.Validations
             return obj.Id;
         }
     }
+
     public class ProcessoValidator : AbstractValidator<ProcessoDto>
     {
-        public ProcessoValidator()
+        protected readonly ProcessoService service;
+        public ProcessoValidator(ProcessoService _processoService)
         {
+            this.service = _processoService;
+            RuleFor(x => x)
+                .Must(this.service.Unique).WithMessage("Número unificado já cadastrado");
+
             RuleFor(x => x.NumeroUnificado)
                 .NotEmpty().WithMessage("Campo obrigatório")
-                .Length(20).WithMessage("Número unificado invalido");
+                .Length(20).WithMessage("Número unificado tem 20 caracteres")
+                .Must(this.NumeroUnificadoFormatValidation).WithMessage("Número unificado inválido");
 
             RuleFor(x => x.DataDistribuicao)
                 .NotEmpty().WithMessage("Campo obrigatório")
@@ -45,6 +54,11 @@ namespace api.Validations
                 .NotNull().WithMessage("Escolha algum responsável")
                 .Must(x => x.Count() <= 3).WithMessage("Limite de 3 responsáveis")
                 .Must((root, c) => c.Distinct(new ComparadorResponsavel()).Count() == root.Responsaveis.Count()).WithMessage("Escolha responsáveis distintos.");
+        }
+
+        public bool NumeroUnificadoFormatValidation(string numeroUnificado)
+        {
+            return Regex.IsMatch(numeroUnificado, @"\d{7}\d{2}\d{4}\w{3}\d{4}");
         }
     }
 }

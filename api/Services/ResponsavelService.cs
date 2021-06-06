@@ -1,5 +1,6 @@
 ﻿using api.Infra;
 using api.Models;
+using api.Models.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,10 @@ namespace api.Services
         public ResponsavelService(Context _context)
             : base(_context)
         {
+        }
+        public bool Unique(ResponsavelDto responsavel)
+        {
+            return !this.Read().Any(x => x.Cpf == responsavel.Cpf && x.Id != responsavel.Id);
         }
     }
 }
