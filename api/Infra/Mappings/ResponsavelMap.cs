@@ -12,6 +12,8 @@ namespace api.Infra.Mappings
     {
         public virtual void Configure(EntityTypeBuilder<Responsavel> builder)
         {
+            builder.HasIndex(x => x.Cpf).IsUnique();
+
             builder.Property(x => x.Cpf).IsRequired().HasMaxLength(14);
             builder.Property(x => x.Email).IsRequired().HasMaxLength(400);
             builder.Property(x => x.Foto).IsRequired();
