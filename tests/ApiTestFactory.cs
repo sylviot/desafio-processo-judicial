@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.TestHost;
 using System.Linq;
+using AutoMapper;
 
 namespace tests
 {
@@ -20,6 +21,7 @@ namespace tests
     {
         protected IConfiguration configuration;
         public Context context;
+        public IMapper mapper;
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureAppConfiguration(config =>
@@ -39,10 +41,32 @@ namespace tests
                 services.AddDbContext<Context>(builder => builder.UseSqlServer(this.configuration["ConnectionsString:AppTest"]));
 
                 this.context = services.BuildServiceProvider().GetRequiredService<Context>();
-                //db.Database.EnsureCreated();
-            });
+                this.mapper = services.BuildServiceProvider().GetRequiredService<IMapper>();
 
-            //base.ConfigureWebHost(builder);
+                this.ClearContext();
+            });
+        }
+
+        private void ClearContext()
+        {
+            try
+            {
+                foreach(var item in this.context.Processos)
+                {
+                    item.ProcessoPai = null;
+                    this.context.Processos.Update(item);
+                }
+                this.context.SaveChanges();
+
+                this.context.ProcessoResponsavel.RemoveRange(this.context.ProcessoResponsavel);
+                this.context.Responsaveis.RemoveRange(this.context.Responsaveis);
+                this.context.Processos.RemoveRange(this.context.Processos);
+                this.context.SaveChanges();
+            }
+            catch
+            {
+                return;
+            }
         }
     }
 }
