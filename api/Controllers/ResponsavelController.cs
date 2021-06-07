@@ -53,9 +53,9 @@ namespace api.Controllers
         public async Task<IActionResult> Create(ResponsavelDto request)
         {
             var model = this.mapper.Map<Responsavel>(request);
-            if (await this.service.CreateAsync(model))
+            if (await this.service.CreateAsync(model) != null)
             {
-                return Ok(true);
+                return Ok(model);
             }
 
             return BadRequest();
