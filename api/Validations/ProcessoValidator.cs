@@ -34,6 +34,7 @@ namespace api.Validations
                 .Must(this.ProcessoNaoCiclico).WithMessage("ProcessoPai está contido na árvore");
 
             RuleFor(x => x.ProcessoPai)
+                .Must(x => !x.HasValue || this.service.Exists(x.Value)).WithMessage("ProcessoPai não existe")
                 .Must(x => this.service.Deep(x) < 4).WithMessage("ProcessoPai já está no 4º nível (Neto)");
 
             RuleFor(x => x.NumeroUnificado)
@@ -73,7 +74,7 @@ namespace api.Validations
 
         public bool ProcessoNaoCiclico(ProcessoDto processo)
         {
-            if (processo.ProcessoPai.HasValue)
+            if (processo.ProcessoPai.HasValue && processo.Id > 0)
             {
                 return this.service.Leef(processo.ProcessoPai.Value, processo.Id);
             }
