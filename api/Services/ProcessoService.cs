@@ -29,6 +29,11 @@ namespace api.Services
             return Deep(pai?.ProcessoPai, deep + 1);
         }
 
+        public bool Exists(int id)
+        {
+            return this.Read().Any(x => x.Id == id);
+        }
+
         public bool Leef(int target, int id)
         {
             var filhos = this.Read().Where(x => x.ProcessoPai == id).Select(x => x.Id).ToList();

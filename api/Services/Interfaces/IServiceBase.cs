@@ -8,7 +8,7 @@ namespace api.Services.Interfaces
 {
     public interface IServiceBase<T> where T : ModelBase
     {
-        Task<bool> CreateAsync(T entity);
+        Task<T> CreateAsync(T entity);
         IQueryable<T> Read();
         Task<bool> UpdateAsync(T entity);
         Task<bool> DeleteAsync(T entity);

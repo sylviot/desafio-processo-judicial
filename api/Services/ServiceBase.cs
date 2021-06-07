@@ -17,7 +17,7 @@ namespace api.Services
             this.context = _context;
         }
 
-        public virtual async Task<bool> CreateAsync(T entity)
+        public virtual async Task<T> CreateAsync(T entity)
         {
             try
             {
@@ -25,11 +25,11 @@ namespace api.Services
                 await this.context.AddAsync<T>(entity);
                 await this.context.SendChanges();
 
-                return true;
+                return entity;
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                return null;
             }
         }
 
@@ -48,7 +48,7 @@ namespace api.Services
 
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
                 return false;
             }

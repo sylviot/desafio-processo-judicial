@@ -10,6 +10,7 @@ namespace api.Services.Interfaces
     public interface IProcessoService : IServiceBase<Processo>
     {
         int Deep(int? paiId, int deep = 0);
+        bool Exists(int id);
         bool Leef(int target, int id);
         bool Unique(ProcessoDto processo);
     }
