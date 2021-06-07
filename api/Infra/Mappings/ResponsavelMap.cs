@@ -16,7 +16,7 @@ namespace api.Infra.Mappings
 
             builder.Property(x => x.Cpf).IsRequired().HasMaxLength(14);
             builder.Property(x => x.Email).IsRequired().HasMaxLength(400);
-            builder.Property(x => x.Foto).IsRequired();
+            builder.Property(x => x.Foto);
             builder.Property(x => x.Nome).IsRequired().HasMaxLength(150);
         }
     }
