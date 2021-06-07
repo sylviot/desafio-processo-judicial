@@ -5,12 +5,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 using FluentValidation.AspNetCore;
 
 using api.Infra;
 using api.Services;
 using api.Services.Interfaces;
+using System.Text.Json.Serialization;
 
 namespace api
 {
@@ -26,13 +28,19 @@ namespace api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(setup => setup.AddDefaultPolicy(configure => configure.AllowAnyMethod().AllowAnyOrigin().AllowAnyHeader()));
+          
             services.AddDbContext<Context>(builder => builder.UseSqlServer(this.Configuration["ConnectionsString:App"]));
             
             services.AddTransient<IResponsavelService, ResponsavelService>();
             services.AddTransient<IProcessoService, ProcessoService>();
 
             services.AddControllers()
-                .AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<Startup>());
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            })
+            .AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             services.AddAutoMapper(conf => conf.AddProfile<AutoMapperProfile>());
 
@@ -56,6 +64,7 @@ namespace api
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseCors();
 
             app.UseAuthorization();
 
