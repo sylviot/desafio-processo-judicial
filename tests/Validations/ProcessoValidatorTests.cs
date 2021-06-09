@@ -108,7 +108,7 @@ namespace Validations
         {
             var model = new ProcessoDto { SituacaoId = 0 };
             var result = this.validator.TestValidate(model);
-            Assert.Contains(result.Errors, x => x.PropertyName == "Situacao" && x.ErrorCode == "NotEmptyValidator");
+            Assert.Contains(result.Errors, x => x.PropertyName == "SituacaoId" && x.ErrorCode == "NotEmptyValidator");
         }
 
         [Fact]
