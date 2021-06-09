@@ -39,7 +39,7 @@ namespace Validations
                     new ResponsavelDto { Id = 3 }
                 },
                 SegredoJustica = false,
-                Situacao = 1
+                SituacaoId = 1
             };
 
             var result = this.validator.TestValidate(model);
@@ -106,7 +106,7 @@ namespace Validations
         [Fact]
         public void Situacao_obrigatorio()
         {
-            var model = new ProcessoDto { Situacao = 0 };
+            var model = new ProcessoDto { SituacaoId = 0 };
             var result = this.validator.TestValidate(model);
             Assert.Contains(result.Errors, x => x.PropertyName == "Situacao" && x.ErrorCode == "NotEmptyValidator");
         }

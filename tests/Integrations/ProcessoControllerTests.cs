@@ -52,7 +52,7 @@ namespace Integrations
                 Descricao = "Lorem",
                 PastaFisicaCliente = "//pasta/client",
                 SegredoJustica = false,
-                Situacao = 1,
+                SituacaoId = 1,
                 Responsaveis = new ResponsavelDto[]
                 {
                     new ResponsavelDto { Id = responsavel.Id }
@@ -81,7 +81,7 @@ namespace Integrations
                 Descricao = "Lorem",
                 PastaFisicaCliente = "//pasta/client",
                 SegredoJustica = false,
-                Situacao = 1,
+                SituacaoId = 1,
                 Responsaveis = new ResponsavelDto[]
                 {
                     new ResponsavelDto { Id = responsavel.Id }
@@ -117,7 +117,7 @@ namespace Integrations
                 Descricao = "Lorem",
                 PastaFisicaCliente = "//pasta/client",
                 SegredoJustica = false,
-                Situacao = 1,
+                SituacaoId = 1,
                 Responsaveis = new ResponsavelDto[]
                 {
                     new ResponsavelDto { Id = responsavel.Id }
