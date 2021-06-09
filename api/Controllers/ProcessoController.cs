@@ -18,11 +18,13 @@ namespace api.Controllers
     {
         protected readonly IMapper mapper;
         protected readonly IProcessoService service;
+        protected readonly IMailService mailService;
 
-        public ProcessoController(IMapper _mapper, IProcessoService _processoService)
+        public ProcessoController(IMapper _mapper, IProcessoService _processoService, IMailService _mailService)
         {
             this.mapper = _mapper;
             this.service = _processoService;
+            this.mailService = _mailService;
         }
 
         [HttpGet]
@@ -57,6 +59,11 @@ namespace api.Controllers
             var model = this.mapper.Map<Processo>(request);
             if(await this.service.CreateAsync(model) != null)
             {
+                foreach(var item in model.Responsaveis)
+                {
+                    this.mailService.Enviar(item.Responsavel.Email, $"Processo {model.NumeroUnificado} - Envolvido", $"Você foi cadastrado como envolvido no processo de número {model.NumeroUnificado}");
+                }
+
                 return Ok(model);
             }
 
@@ -68,7 +75,6 @@ namespace api.Controllers
         public async Task<IActionResult> Update(ProcessoDto request)
         {
             var model = this.mapper.Map<Processo>(request);
-            //var model = this.service.Read().FirstOrDefault(x => x.Id == request.Id);
             if (await this.service.UpdateAsync(model))
             {
                 return Ok(true);

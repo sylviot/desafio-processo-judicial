@@ -3,11 +3,13 @@ using api.Models.Http;
 using api.Services;
 using api.Services.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace api.Controllers
@@ -18,16 +20,20 @@ namespace api.Controllers
     {
         protected readonly IMapper mapper;
         protected readonly IResponsavelService service;
+        protected readonly IMailService mailService;
 
-        public ResponsavelController(IMapper _mapper, IResponsavelService _responsavelService)
+        public ResponsavelController(IMapper _mapper, IResponsavelService _responsavelService, IMailService _mailService)
         {
             this.mapper = _mapper;
             this.service = _responsavelService;
+            this.mailService = _mailService;
         }
 
         [HttpGet]
         public async Task<IActionResult> All([FromQuery] ResponsavelFilterDto request)
         {
+            this.mailService.Enviar("para@email.com", "assunto", "conteudo");
+
             var query = await this.service.Read()
                 .Where(x => string.IsNullOrEmpty(request.Cpf) || x.Cpf.Replace(".","").Replace("-", "").Contains(request.Cpf.Replace(".", "").Replace("-", "")))
                 .Where(x => string.IsNullOrEmpty(request.Nome) || x.Nome.Contains(request.Nome))

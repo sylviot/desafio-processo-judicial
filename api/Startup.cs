@@ -12,8 +12,10 @@ using FluentValidation.AspNetCore;
 using api.Infra;
 using api.Services;
 using api.Services.Interfaces;
-using System.Text.Json.Serialization;
 using Serilog;
+using Hangfire;
+using Hangfire.SqlServer;
+using System;
 
 namespace api
 {
@@ -30,11 +32,12 @@ namespace api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors(setup => setup.AddDefaultPolicy(configure => configure.AllowAnyMethod().AllowAnyOrigin().AllowAnyHeader()));
-          
+
             services.AddDbContext<Context>(builder => builder.UseSqlServer(this.Configuration["ConnectionsString:App"]));
-            
+
             services.AddTransient<IResponsavelService, ResponsavelService>();
             services.AddTransient<IProcessoService, ProcessoService>();
+            services.AddTransient<IMailService, MailService>();
 
             services.AddControllers()
             .AddNewtonsoftJson(options =>
@@ -51,6 +54,20 @@ namespace api
                 .WriteTo.Console()
                 .CreateLogger();
 
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(this.Configuration["ConnectionsString:App"], new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    DisableGlobalLocks = true
+                }));
+
+            services.AddHangfireServer();
 
             services.AddSwaggerGen(c =>
             {
@@ -64,7 +81,7 @@ namespace api
             if (env.IsDevelopment())
             {
             }
-                app.UseDeveloperExceptionPage();
+            app.UseDeveloperExceptionPage();
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "api v1"));
@@ -76,9 +93,12 @@ namespace api
 
             app.UseAuthorization();
 
+            app.UseHangfireDashboard();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHangfireDashboard();
             });
         }
     }

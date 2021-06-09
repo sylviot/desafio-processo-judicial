@@ -55,6 +55,12 @@ namespace api.Services
             return !this.Read().Any(x => x.NumeroUnificado == processo.NumeroUnificado && x.Id != processo.Id);
         }
 
+        public override async Task<Processo> CreateAsync(Processo entity)
+        {
+            await base.CreateAsync(entity);
+            return await this.Read().Include("Responsaveis.Responsavel").FirstOrDefaultAsync(x => x.Id == entity.Id);
+        }
+
         public override Task<bool> UpdateAsync(Processo entity)
         {
             base.context.BeginTransaction();
