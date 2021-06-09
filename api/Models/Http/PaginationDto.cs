@@ -7,7 +7,7 @@ namespace api.Models.Http
 {
     public class PaginationDto
     {
-        public uint Size { get; set; } = 1;
+        public uint Size { get; set; } = 5;
         public uint Page { get; set; } = 1;
     }
 }

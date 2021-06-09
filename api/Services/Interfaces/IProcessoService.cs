@@ -12,7 +12,7 @@ namespace api.Services.Interfaces
         Task<DataPaginationDto> Paginate(ProcessoFilterDto request);
         int Deep(int? paiId, int deep = 0);
         bool Exists(int id);
-        bool Leef(int target, int id);
+        bool Leef(int target, int id, int deep = 0);
         bool Unique(ProcessoDto processo);
     }
 }

@@ -68,20 +68,20 @@ namespace api.Services
             return this.Read().Any(x => x.Id == id);
         }
 
-        public bool Leef(int target, int id)
+        public bool Leef(int target, int id, int deep = 0)
         {
             var filhos = this.Read().Where(x => x.ProcessoPai == id).Select(x => x.Id).ToList();
-            if (filhos.Any(x => x == target))
+            if (filhos.Any(x => x == target) && deep > 0)
             {
                 return false;
             }
 
             foreach (var item in filhos)
             {
-                return Leef(target, item);
+                return Leef(target, item, ++deep);
             }
 
-            return false;
+            return true;
         }
 
         public bool Unique(ProcessoDto processo)
