@@ -3,13 +3,35 @@ version: "3"
 services:
   api:
     build: ./api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    links:
+      - "database:database"
     ports:
-      - "80:80"
+      - "8000:80"
+    depends_on:
+      - database
   database:
-    image: mcr.microsoft.com/mssql/server
+    image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       - ACCEPT_EULA=Y
       - MSSQL_PID=Express
       - SA_PASSWORD=!@#Desafio#@!
+    healthcheck:
+      test: ["CMD", "/bin/bash", "/opt/mssql-tools/bin/sqlcmd", "-ddesafio", "-Usa", "-P!@#Desafio#@!", "-Q", "select 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     ports:
       - "1444:1433"
+    volumes:
+      - ./database:/var/opt/mssql/data
+  frontend:
+    build: ./front
+    ports:
+      - "9000:5000"
+    links:
+      - "api:api"
+    depends_on:
+      - api
+      - database
