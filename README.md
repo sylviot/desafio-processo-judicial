@@ -11,5 +11,7 @@ Com os requisitos instalados na maquina o projeto roda com o comando:
 
 `docker-compose up -d`
 
-- API - Acesso ao [swagger](http://localhost/)
+- APP - Acesso a [site](http://localhost:9000/)
+- API - Acesso ao [swagger](http://localhost:8000/)
+- Hangfire - acesso ao [Dashboard](http://localhost:8000/hangfire/)
 - Database - localhost,1444 (sa / !@#Desafio#@!)
