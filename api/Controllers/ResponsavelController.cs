@@ -32,8 +32,6 @@ namespace api.Controllers
         [HttpGet]
         public async Task<IActionResult> All([FromQuery] ResponsavelFilterDto request)
         {
-            this.mailService.Enviar("para@email.com", "assunto", "conteudo");
-
             var query = await this.service.Read()
                 .Where(x => string.IsNullOrEmpty(request.Cpf) || x.Cpf.Replace(".","").Replace("-", "").Contains(request.Cpf.Replace(".", "").Replace("-", "")))
                 .Where(x => string.IsNullOrEmpty(request.Nome) || x.Nome.Contains(request.Nome))
@@ -52,6 +50,8 @@ namespace api.Controllers
             {
                 previous = (int)request.Page - 1;
             }
+
+            query = query.Take((int)request.Size).ToList();
 
             return Ok(new { data = query, page = request.Page, size = request.Size, previous = previous, next = next });
         }

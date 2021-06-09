@@ -9,6 +9,7 @@ namespace api.Services.Interfaces
 {
     public interface IResponsavelService : IServiceBase<Responsavel>
     {
+        Task<DataPaginationDto> Paginate(ResponsavelFilterDto request);
         bool Unique(ResponsavelDto responsavel);
     }
 }

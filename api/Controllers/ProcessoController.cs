@@ -28,29 +28,16 @@ namespace api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> All([FromQuery] ResponsavelFilterDto request)
+        public async Task<IActionResult> All([FromQuery] ProcessoFilterDto request)
         {
-            var query = await this.service.Read()
-                .Include("Responsaveis.Responsavel")
-                .Include(x => x.Situacao)
-                .Where(x => string.IsNullOrEmpty(request.Nome) || x.NumeroUnificado.Contains(request.Nome))
-                .Skip((int)request.Size * ((int)request.Page - 1))
-                .Take((int)request.Size + 1)
-                .ToListAsync();
-            int? next = null;
-            int? previous = null;
-
-            if (query.Count > request.Size)
+            try
             {
-                next = (int)request.Page + 1;
+                return Ok(await this.service.Paginate(request));
             }
-
-            if (request.Page > 1)
+            catch
             {
-                previous = (int)request.Page - 1;
+                return BadRequest();
             }
-
-            return Ok(new { data = query, page = request.Page, size = request.Size, previous = previous, next = next });
         }
 
         [HttpPost]
