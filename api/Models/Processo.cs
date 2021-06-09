@@ -11,8 +11,9 @@ namespace api.Models
         public bool SegredoJustica { get; set; }
         public string PastaFisicaCliente { get; set; }
         public string Descricao { get; set; }
-        public int Situacao { get; set; }
+        public int SituacaoId { get; set; }
 
         public ICollection<ProcessoResponsavel> Responsaveis { get; set; }
+        public virtual Situacao Situacao { get; set; }
     }
 }

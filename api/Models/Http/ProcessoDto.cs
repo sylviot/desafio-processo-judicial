@@ -15,7 +15,7 @@ namespace api.Models.Http
         public bool SegredoJustica { get; set; }
         public string PastaFisicaCliente { get; set; }
         public string Descricao { get; set; }
-        public int Situacao { get; set; }
+        public int SituacaoId { get; set; }
 
         public ResponsavelDto[] Responsaveis { get; set; }
     }

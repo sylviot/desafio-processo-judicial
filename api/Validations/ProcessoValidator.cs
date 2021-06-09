@@ -52,7 +52,7 @@ namespace api.Validations
             RuleFor(x => x.PastaFisicaCliente)
                 .MaximumLength(50).WithMessage("Limite de 50 caracteres");
 
-            RuleFor(x => x.Situacao)
+            RuleFor(x => x.SituacaoId)
                 .NotEmpty().WithMessage("Campo obrigatório");
 
             RuleFor(x => x.Responsaveis)

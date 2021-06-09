@@ -5,16 +5,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
+using Newtonsoft.Json;
 
 namespace api.Services
 {
     public class ServiceBase<T> where T : ModelBase
     {
         protected readonly Context context;
-
+        protected readonly JsonSerializerSettings jsonSettings = new JsonSerializerSettings()
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        };
         public ServiceBase(Context _context)
         {
             this.context = _context;
+            this.context.SaveChangesFailed += Context_SaveChangesFailed;
+        }
+
+        private void Context_SaveChangesFailed(object sender, Microsoft.EntityFrameworkCore.SaveChangesFailedEventArgs e)
+        {
+            Log.Information("[FAIL] - {@message}", e.Exception.InnerException?.Message);
         }
 
         public virtual async Task<T> CreateAsync(T entity)
@@ -27,7 +38,7 @@ namespace api.Services
 
                 return entity;
             }
-            catch (Exception ex)
+            catch
             {
                 return null;
             }
@@ -48,7 +59,7 @@ namespace api.Services
 
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }

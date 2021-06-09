@@ -29,6 +29,7 @@ namespace api.Controllers
         public async Task<IActionResult> All([FromQuery] ResponsavelFilterDto request)
         {
             var query = await this.service.Read()
+                .Where(x => string.IsNullOrEmpty(request.Cpf) || x.Cpf.Replace(".","").Replace("-", "").Contains(request.Cpf.Replace(".", "").Replace("-", "")))
                 .Where(x => string.IsNullOrEmpty(request.Nome) || x.Nome.Contains(request.Nome))
                 .Skip((int)request.Size * ((int)request.Page - 1))
                 .Take((int)request.Size + 1)

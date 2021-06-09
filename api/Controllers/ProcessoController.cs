@@ -29,6 +29,8 @@ namespace api.Controllers
         public async Task<IActionResult> All([FromQuery] ResponsavelFilterDto request)
         {
             var query = await this.service.Read()
+                .Include("Responsaveis.Responsavel")
+                .Include(x => x.Situacao)
                 .Where(x => string.IsNullOrEmpty(request.Nome) || x.NumeroUnificado.Contains(request.Nome))
                 .Skip((int)request.Size * ((int)request.Page - 1))
                 .Take((int)request.Size + 1)

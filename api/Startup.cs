@@ -13,6 +13,7 @@ using api.Infra;
 using api.Services;
 using api.Services.Interfaces;
 using System.Text.Json.Serialization;
+using Serilog;
 
 namespace api
 {
@@ -44,6 +45,13 @@ namespace api
 
             services.AddAutoMapper(conf => conf.AddProfile<AutoMapperProfile>());
 
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .CreateLogger();
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "api", Version = "v1" });
@@ -55,8 +63,8 @@ namespace api
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
             }
+                app.UseDeveloperExceptionPage();
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "api v1"));
